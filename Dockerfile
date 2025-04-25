@@ -64,7 +64,7 @@ RUN docker-php-ext-configure gd \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs npm
 
 RUN composer global require "squizlabs/php_codesniffer=*" \
     && curl -LO https://deployer.org/deployer.phar \
