@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 
 # Install dev dependencies
-RUN apt-get update && apt-get upgrade
+RUN apt-get update -y && apt-get upgrade -y
 
 # Install production dependencies
 RUN apt-get install -y --no-install-recommends \
@@ -32,7 +32,8 @@ RUN apt-get install -y --no-install-recommends \
     libmagickwand-dev \
     libldap2-dev \
     libfreetype6-dev \
-    libfreetype6
+    libfreetype6 \
+	ca-certificates gnupg
 
 
 # Install PECL and PEAR extensions
@@ -62,15 +63,17 @@ RUN docker-php-ext-configure gd \
     && docker-php-ext-configure ldap
 
 # Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs npm
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
+# Install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
 
 RUN composer global require "squizlabs/php_codesniffer=*" \
     && curl -LO https://deployer.org/deployer.phar \
     && mv deployer.phar /usr/local/bin/dep \
-    && chmod +x /usr/local/bin/dep \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
+    && chmod +x /usr/local/bin/dep
+    
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
 
 # Setup working directory
 WORKDIR /var/www
