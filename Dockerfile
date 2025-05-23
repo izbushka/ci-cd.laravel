@@ -6,6 +6,9 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 ENV DEBIAN_FRONTEND noninteractive
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 
+ENV MYSQL_ROOT_PASSWORD root
+ENV MYSQL_DATABASE test
+
 # Install dev dependencies
 RUN apt-get update -y && apt-get upgrade -y
 
@@ -33,7 +36,8 @@ RUN apt-get install -y --no-install-recommends \
     libldap2-dev \
     libfreetype6-dev \
     libfreetype6 \
-	ca-certificates gnupg
+	ca-certificates gnupg \
+	mysql-server
 
 
 # Install PECL and PEAR extensions
@@ -75,5 +79,10 @@ RUN composer global require "squizlabs/php_codesniffer=*" \
     
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
 
+RUN service mysql start && \
+    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;" && \
+    mysql -e "CREATE DATABASE ${MYSQL_DATABASE};"
+
+CMD ["mysqld"]
 # Setup working directory
 WORKDIR /var/www
