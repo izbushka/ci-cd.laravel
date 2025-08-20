@@ -73,7 +73,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
 RUN composer global require "squizlabs/php_codesniffer=*" \
-    && curl -LO https://deployer.org/deployer.phar \
+    && curl -LO https://deployer.org/releases/v7.5.12/deployer.phar  \
     && mv deployer.phar /usr/local/bin/dep \
     && chmod +x /usr/local/bin/dep
     
